@@ -2,12 +2,18 @@ package com.example.crudapp.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.example.crudapp.R;
 import com.example.crudapp.adapters.PersonAdapter;
-import com.example.crudapp.databinding.ActivityMainBinding;
 import com.example.crudapp.models.Person;
 import com.example.crudapp.repository.PersonRepository;
 import com.example.crudapp.utils.SessionManager;
@@ -15,7 +21,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private ActivityMainBinding binding;
+
+    private RecyclerView recyclerView;
+    private EditText etSearch;
+    private FloatingActionButton fabAdd;
+    private Button btnLogout;
+    private ProgressBar progressBar;
+    private TextView tvEmpty;
+
     private SessionManager sessionManager;
     private PersonRepository personRepository;
     private PersonAdapter personAdapter;
@@ -25,29 +38,29 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        setContentView(R.layout.activity_main);
+
+        initViews();
 
         sessionManager = new SessionManager(this);
         personRepository = new PersonRepository(this);
 
-        // Check if logged in
         if (!sessionManager.isLoggedIn()) {
             navigateToLogin();
             return;
         }
 
-        setupToolbar();
         setupRecyclerView();
         loadPersons();
 
-        binding.fabAdd.setOnClickListener(v -> {
+        fabAdd.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, AddEditPersonActivity.class);
             startActivity(intent);
         });
 
-        // Search functionality
-        binding.etSearch.addTextChangedListener(new android.text.TextWatcher() {
+        btnLogout.setOnClickListener(v -> logout());
+
+        etSearch.addTextChangedListener(new android.text.TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
@@ -61,9 +74,13 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void setupToolbar() {
-        setSupportActionBar(binding.toolbar);
-        binding.btnLogout.setOnClickListener(v -> logout());
+    private void initViews() {
+        recyclerView = findViewById(R.id.recyclerView);
+        etSearch = findViewById(R.id.etSearch);
+        fabAdd = findViewById(R.id.fabAdd);
+        btnLogout = findViewById(R.id.btnLogout);
+        progressBar = findViewById(R.id.progressBar);
+        tvEmpty = findViewById(R.id.tvEmpty);
     }
 
     private void setupRecyclerView() {
@@ -81,17 +98,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        binding.recyclerView.setAdapter(personAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(personAdapter);
     }
 
     private void loadPersons() {
-        binding.progressBar.setVisibility(android.view.View.VISIBLE);
+        progressBar.setVisibility(android.view.View.VISIBLE);
 
         personRepository.getAllPersons(new PersonRepository.OnPersonsLoadedListener() {
             @Override
             public void onLoaded(List<Person> persons) {
-                binding.progressBar.setVisibility(android.view.View.GONE);
+                progressBar.setVisibility(android.view.View.GONE);
                 personList.clear();
                 personList.addAll(persons);
                 fullPersonList.clear();
@@ -99,9 +116,9 @@ public class MainActivity extends AppCompatActivity {
                 personAdapter.notifyDataSetChanged();
 
                 if (personList.isEmpty()) {
-                    binding.tvEmpty.setVisibility(android.view.View.VISIBLE);
+                    tvEmpty.setVisibility(android.view.View.VISIBLE);
                 } else {
-                    binding.tvEmpty.setVisibility(android.view.View.GONE);
+                    tvEmpty.setVisibility(android.view.View.GONE);
                 }
             }
         });
@@ -129,27 +146,25 @@ public class MainActivity extends AppCompatActivity {
         new AlertDialog.Builder(this)
                 .setTitle("Delete Person")
                 .setMessage("Are you sure you want to delete " + person.getName() + "?")
-                .setPositiveButton("Delete", (dialog, which) -> {
-                    deletePerson(person);
-                })
+                .setPositiveButton("Delete", (dialog, which) -> deletePerson(person))
                 .setNegativeButton("Cancel", null)
                 .show();
     }
 
     private void deletePerson(Person person) {
-        binding.progressBar.setVisibility(android.view.View.VISIBLE);
+        progressBar.setVisibility(android.view.View.VISIBLE);
 
         personRepository.deletePerson(person, new PersonRepository.OnPersonActionListener() {
             @Override
             public void onSuccess() {
-                binding.progressBar.setVisibility(android.view.View.GONE);
+                progressBar.setVisibility(android.view.View.GONE);
                 Toast.makeText(MainActivity.this, "Deleted successfully", Toast.LENGTH_SHORT).show();
                 loadPersons();
             }
 
             @Override
             public void onError(String error) {
-                binding.progressBar.setVisibility(android.view.View.GONE);
+                progressBar.setVisibility(android.view.View.GONE);
                 Toast.makeText(MainActivity.this, "Error: " + error, Toast.LENGTH_SHORT).show();
             }
         });

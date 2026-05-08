@@ -1,10 +1,13 @@
 package com.example.crudapp.adapters;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.crudapp.databinding.ItemPersonBinding;
+import com.example.crudapp.R;
 import com.example.crudapp.models.Person;
 import java.util.List;
 
@@ -25,9 +28,9 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.ViewHolder
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ItemPersonBinding binding = ItemPersonBinding.inflate(
-                LayoutInflater.from(parent.getContext()), parent, false);
-        return new ViewHolder(binding);
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_person, parent, false);
+        return new ViewHolder(view);
     }
 
     @Override
@@ -42,21 +45,27 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.ViewHolder
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        private ItemPersonBinding binding;
+        private TextView tvName, tvOccupation, tvLocation, tvSkills;
+        private Button btnEdit, btnDelete;
 
-        ViewHolder(ItemPersonBinding binding) {
-            super(binding.getRoot());
-            this.binding = binding;
+        ViewHolder(View itemView) {
+            super(itemView);
+            tvName = itemView.findViewById(R.id.tvName);
+            tvOccupation = itemView.findViewById(R.id.tvOccupation);
+            tvLocation = itemView.findViewById(R.id.tvLocation);
+            tvSkills = itemView.findViewById(R.id.tvSkills);
+            btnEdit = itemView.findViewById(R.id.btnEdit);
+            btnDelete = itemView.findViewById(R.id.btnDelete);
         }
 
         void bind(Person person) {
-            binding.tvName.setText(person.getName());
-            binding.tvOccupation.setText("Occupation: " + person.getOccupation());
-            binding.tvLocation.setText("Location: " + person.getLocation());
-            binding.tvSkills.setText("Skills: " + person.getSkills());
+            tvName.setText(person.getName());
+            tvOccupation.setText("Occupation: " + person.getOccupation());
+            tvLocation.setText("Location: " + person.getLocation());
+            tvSkills.setText("Skills: " + person.getSkills());
 
-            binding.btnEdit.setOnClickListener(v -> listener.onEdit(person));
-            binding.btnDelete.setOnClickListener(v -> listener.onDelete(person));
+            btnEdit.setOnClickListener(v -> listener.onEdit(person));
+            btnDelete.setOnClickListener(v -> listener.onDelete(person));
         }
     }
 }
