@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.implementation
+
 plugins {
     alias(libs.plugins.android.application)
 }
@@ -36,11 +38,21 @@ android {
 }
 
 dependencies {
-    implementation(libs.activity.ktx)
-    implementation(libs.appcompat)
-    implementation(libs.constraintlayout)
-    implementation(libs.material)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.espresso.core)
-    androidTestImplementation(libs.ext.junit)
+
+
+    implementation("androidx.appcompat:appcompat:1.6.1")
+
+    implementation("com.google.android.material:material:1.9.0")
+
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+
+    implementation("androidx.recyclerview:recyclerview:1.3.0")
+
+    implementation("androidx.cardview:cardview:1.0.0")
+
+    implementation("androidx.room:room-runtime:2.5.2")
+
+    annotationProcessor("androidx.room:room-compiler:2.5.2")
+
+    implementation("androidx.room:room-ktx:2.5.2")
 }
