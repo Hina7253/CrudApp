@@ -50,4 +50,14 @@ This app includes Login and Register functionality using real API calls and perf
 
 ---
 
+## App Flow
+
+1. User registers using API
+2. User logs in using API
+3. After successful login, Main Activity opens
+4. User can perform CRUD operations
+5. Data is stored locally using Room Database
+
+---
+
 
