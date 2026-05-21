@@ -30,3 +30,24 @@ This app includes Login and Register functionality using real API calls and perf
 
 ---
 
+## Project Structure
+
+- Authentication Module
+  - Login
+  - Register
+  - API Integration
+
+- CRUD Module
+  - Add Data
+  - View Data
+  - Update Data
+  - Delete Data
+
+- Database Module
+  - Room Database
+  - DAO
+  - Entity
+
+---
+
+
